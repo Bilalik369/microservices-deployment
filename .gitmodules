@@ -1,0 +1,15 @@
+[submodule "Microservices-Auth-Service-"]
+	path = Microservices-Auth-Service-
+	url = https://github.com/Bilalik369/Microservices-Auth-Service-.git
+[submodule "mecroservices-gateway-"]
+	path = mecroservices-gateway-
+	url = https://github.com/Bilalik369/mecroservices-gateway-.git
+[submodule "mecroservices-brief"]
+	path = mecroservices-brief
+	url = https://github.com/Bilalik369/mecroservices-brief.git
+[submodule "Application-de-gestion-des-competences-Partie-2-"]
+	path = Application-de-gestion-des-competences-Partie-2-
+	url = https://github.com/Bilalik369/Application-de-gestion-des-competences-Partie-2-.git
+[submodule "Microservice-competences"]
+	path = Microservice-competences
+	url = https://github.com/Bilalik369/Microservice-competences.git
