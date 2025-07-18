@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - microservices_network
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/microservices_db?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+    networks:
+      - microservices_network
+
+  brief-service:
+    build: ./brief-service
+    container_name: brief-service
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+      - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/microservices_db?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongodb
+    networks:
+      - microservices_network
+
+  apprenant-service:
+    build: ./apprenant-service
+    container_name: apprenant-service
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3003
+      - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/microservices_db?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongodb
+    networks:
+      - microservices_network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - BRIEF_SERVICE_URL=http://brief-service:3002
+      - APPRENANT_SERVICE_URL=http://apprenant-service:3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - brief-service
+      - apprenant-service
+    networks:
+      - microservices_network
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  microservices_network:
+    driver: bridge
